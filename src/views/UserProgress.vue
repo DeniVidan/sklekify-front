@@ -1,15 +1,16 @@
 <template>
-  <hello-world />
+  <div>
+    progress
+  </div>
 </template>
 
 <script>
-  import HelloWorld from '../components/HelloWorld'
 
   export default {
-    name: 'HomePage',
+    name: 'UserProgress',
 
     components: {
-      HelloWorld,
+      
     },
   }
 </script>
