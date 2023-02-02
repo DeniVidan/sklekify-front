@@ -3,16 +3,25 @@
     <v-row>
       <v-col cols="12" sm="6" md="4">
         <v-avatar size="120">
-          <img v-if="profileImage" :src="profileImage" alt="Profile Image">
-          <img v-else src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png" alt="Default Profile Image"/>
+          <img v-if="profileImage" :src="profileImage" alt="Profile Image" />
+          <img
+            v-else
+            :src="this.proba"
+            alt="Default Profile Image"
+          />
         </v-avatar>
         <v-file-input
+          type="file"
           v-model="profileImageUpload"
           accept="image/*"
           @change="uploadProfileImage"
           placeholder="Upload Profile Picture"
         ></v-file-input>
       </v-col>
+      <div > 
+        <img width="300px" v-bind:src="this.img"/>
+      </div>
+      
       <v-col cols="12" sm="6" md="8">
         <v-form>
           <v-text-field
@@ -33,60 +42,103 @@
             @blur="updateProfile"
           ></v-text-field>
           <div>
-            <v-btn color="primary" style="float:right">Update</v-btn>
+            <v-btn color="primary" style="float: right">Update</v-btn>
           </div>
-          
         </v-form>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-
 <script>
-import axios from 'axios';
+//import axios from "axios";
+//import imageCompressor from "vue-image-compressor";
 
 export default {
   name: "UserProfile",
 
   data() {
     return {
-      userName: 'deni vidan',
-      userEmail: 'deni@gmail.com',
-      userLocation: 'hrvatska',
-      profileImage: '',
+      userName: "deni vidan",
+      userEmail: "deni@gmail.com",
+      userLocation: "hrvatska",
+      profileImage: "",
       profileImageUpload: null,
       nameRules: [
-        v => !!v || 'Name is required',
-        v => v.length <= 100 || 'Name must be less than 100 characters',
+        (v) => !!v || "Name is required",
+        (v) => v.length <= 100 || "Name must be less than 100 characters",
       ],
       emailRules: [
-        v => !!v || 'Email is required',
-        v => /.+@.+/.test(v) || 'Email must be valid',
+        (v) => !!v || "Email is required",
+        (v) => /.+@.+/.test(v) || "Email must be valid",
       ],
-    }
+      img: "",
+      scale: 100,
+      quality: 50,
+      originalSize: true,
+      original: {},
+      proba: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fprofile%2520picture%2F&psig=AOvVaw2S1ZfM4Zv7laQ_1tEfyWpZ&ust=1675351738431000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCOCskNzR9PwCFQAAAAAdAAAAABAE"
+    };
   },
   methods: {
     async uploadProfileImage() {
-      try {
-        // Create a new FormData object
-        const formData = new FormData();
-        // Append the file to the FormData object
-        formData.append('profileImage', this.profileImageUpload);
-        // Make a POST request to the server with the FormData object
-        const { data } = await axios.post('/api/upload-profile-image', formData);
-        // Update the profileImage data property with the URL of the uploaded image
-        this.profileImage = data.imageUrl;
-      } catch (error) {
-        console.error(error);
-      }
+      this.imgToBase64();
     },
+
+    /*     upload() {
+      let compressor = this.$refs.compressor.$el;
+      compressor.click();
+    }, */
+
+    /* imgToBase64() {
+      const file = document.querySelector("input[type=file]").files[0];
+      const reader = new FileReader();
+
+      let rawImg = this.img;
+      reader.onloadend = () => {
+        rawImg = reader.result;
+        console.log(rawImg);
+      };
+      reader.readAsDataURL(this.img);
+      console.log(file);
+
+    } */
+    imgToBase64() {
+      const fileInput = document.querySelector("input[type=file]");
+      if (!fileInput || !fileInput.files[0]) return;
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        this.img = reader.result;
+        console.log(this.img);
+      };
+      reader.readAsDataURL(file);
+    },
+
+    /*     getFiles(obj) {
+      console.log(obj.compressed.base64, "dada");
+
+      this.img = obj.compressed.blob;
+      this.original = obj.original;
+      this.compressed = obj.compressed;
+
+      console.log(obj.compressed);
+      this.imgToBase64();
+    }, */
+
     updateProfile() {
       // send updated profile data to the server
-    }
+    },
+
+    test() {
+      console.log(this.img);
+    },
   },
 
-  components: {},
+  components: {
+    /* imageCompressor */
+  },
 };
 </script>
 
