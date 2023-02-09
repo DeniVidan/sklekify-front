@@ -51,7 +51,7 @@
 </template>
 
 <script>
-//import axios from "axios";
+import axios from "axios";
 //import imageCompressor from "vue-image-compressor";
 
 export default {
@@ -85,24 +85,6 @@ export default {
       this.imgToBase64();
     },
 
-    /*     upload() {
-      let compressor = this.$refs.compressor.$el;
-      compressor.click();
-    }, */
-
-    /* imgToBase64() {
-      const file = document.querySelector("input[type=file]").files[0];
-      const reader = new FileReader();
-
-      let rawImg = this.img;
-      reader.onloadend = () => {
-        rawImg = reader.result;
-        console.log(rawImg);
-      };
-      reader.readAsDataURL(this.img);
-      console.log(file);
-
-    } */
     imgToBase64() {
       const fileInput = document.querySelector("input[type=file]");
       if (!fileInput || !fileInput.files[0]) return;
@@ -116,20 +98,13 @@ export default {
       reader.readAsDataURL(file);
     },
 
-    /*     getFiles(obj) {
-      console.log(obj.compressed.base64, "dada");
 
-      this.img = obj.compressed.blob;
-      this.original = obj.original;
-      this.compressed = obj.compressed;
 
-      console.log(obj.compressed);
-      this.imgToBase64();
-    }, */
-
-    updateProfile() {
-      // send updated profile data to the server
+    async getUser() {
+      await axios.get("/user/")
     },
+
+
 
     test() {
       console.log(this.img);

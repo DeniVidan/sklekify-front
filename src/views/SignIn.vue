@@ -32,6 +32,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
+import axios from "axios";
 
 export default {
   name: "SignIn",
@@ -71,8 +72,8 @@ export default {
     passwordErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-     // !this.$v.password.password && errors.push("Must be valid password");
-     // !this.$v.password.required && errors.push("Password is required");
+      // !this.$v.password.password && errors.push("Must be valid password");
+      // !this.$v.password.required && errors.push("Password is required");
       return errors;
     },
   },
@@ -80,11 +81,27 @@ export default {
   methods: {
     submit() {
       this.$v.$touch();
+      this.login();
     },
     clear() {
       this.$v.$reset();
       this.email = "";
       this.password = "";
+    },
+    async login() {
+      await axios
+        .post("/auth/user", {
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      console.log();
     },
   },
 };

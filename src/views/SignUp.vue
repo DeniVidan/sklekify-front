@@ -60,6 +60,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
+import axios from "axios";
 
 export default {
   name: "SignUp",
@@ -82,9 +83,9 @@ export default {
     Lname: "",
     email: "",
     password: "",
-    show1: false, 
+    show1: false,
     checkbox: false,
-    
+
     rules: {
       required: (value) => !!value || "Required.",
       min: (v) => v.length >= 8 || "Min 8 characters",
@@ -125,7 +126,6 @@ export default {
     passwordErrors() {
       const errors = [];
       if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.password && errors.push("Must be valid password");
       !this.$v.password.required && errors.push("Password is required");
       return errors;
     },
@@ -134,7 +134,9 @@ export default {
   methods: {
     submit() {
       this.$v.$touch();
+      this.addUser();
     },
+
     clear() {
       this.$v.$reset();
       this.Fname = "";
@@ -143,6 +145,43 @@ export default {
       this.password = "";
       this.checkbox = false;
     },
+
+    async addUser() {
+      await axios
+        .post("/add/user", {
+          firstname: this.Fname,
+          lastname: this.Lname,
+          email: this.email,
+          password: this.password,
+        })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+      console.log();
+    },
+
+/*     async getEmail() {
+      try {
+        const { data: existingUser } = await axios.get(
+          `/users?email=${this.email}`
+        );
+        if (existingUser) throw new Error("Email already in use");
+
+        const { data: user } = await axios.post("/api/users", {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        });
+
+        // Do something with the newly added user
+      } catch (error) {
+        this.errorMessage = error.message;
+      }
+    }, */
   },
 };
 </script>

@@ -1,46 +1,46 @@
 <template>
   <div>
-    
-      <v-layout class="layout ma-2">
-        <v-card class="mx-auto" max-width="400">
-          <v-img
-            class="white--text align-end"
-            height="200px"
-            :src="post.imageURL"
-          >
-            <v-card-title class="mt-0">
-              <p class="card-title">
-                {{ post.name }}
-              </p>
-            </v-card-title>
-          </v-img>
+    <v-layout class="layout ma-2">
+      <v-card class="mx-auto" max-width="400">
+        <v-img
+          class="white--text align-end"
+          height="200px"
+          :src="post.imageURL"
+        >
+          <v-card-title class="mt-0" v-model="name">
+            <p class="card-title">
+              {{ post.name }}
+            </p>
+          </v-card-title>
+        </v-img>
 
-          <v-card-subtitle class="pb-0"> </v-card-subtitle>
+        <v-card-subtitle class="pb-0"> </v-card-subtitle>
 
-          <v-card-text class="text--primary">
-            <div class="mb-3"><h2>Share todays progress:</h2></div>
+        <v-card-text class="text--primary">
+          <div class="mb-3"><h2>Share todays progress:</h2></div>
 
-            <div class="inline">
-              <v-text-field
-                class="number-input"
-                v-model="numberValue"
-                hide-details
-                single-line
-                type="number"
-                label="Number of repetitions"
-                min="0"
-              />
+          <div class="inline">
+            <v-text-field
+              class="number-input"
+              v-model="repValue"
+              hide-details
+              single-line
+              type="number"
+              label="Number of repetitions"
+              min="0"
+            />
 
-              <v-btn class="ml-2" color="success"> submit </v-btn>
-            </div>
-          </v-card-text>
+            <v-btn class="ml-2" color="success" @click="updateData()"> submit </v-btn>
+          </div>
+        </v-card-text>
 
-          <v-card-actions>
-            <v-btn class="ml-auto" color="error" text @click="deleteExercise"> Remove exercise </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-layout>
-    
+        <v-card-actions>
+          <v-btn class="ml-auto" color="error" text @click="deleteExercise">
+            Remove exercise
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-layout>
   </div>
 </template>
 <script>
@@ -54,63 +54,74 @@ export default {
     deleteExerciseFrontend: Function,
   },
 
-
   data: () => ({
-    numberValue: "",
+    name: "",
+    repValue: null,
+    image: "",
   }),
 
   methods: {
-/*     deleteExercise(id) {
-        axios.delete(`/post/delete/${id}`)
-        .then(response => {
-            // Update component's data to reflect the deletion
-            this.post = this.post.filter(post => post._id !== id);
-        })
-        .catch(error => {
-            console.error(error);
-        });
-    }, */
+
+    proba() {
+
+    },
 
 
-      async deleteExercise() {
+    async deleteExercise() {
+      try {
+        await axios.delete(`/post/delete/${this.post._id}`);
+        this.deleteExerciseFrontend(this.post._id);
+        this.$toast.success(
+          `${this.post.name} ${this.post.imageURL} was deleted sucesfully!`,
+          {
+            position: "top-center",
+            timeout: 4369,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 1.08,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false,
+          }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    async updateData() {
+      
+      let id = this.post._id
+      console.log(id)
+
+    await axios.post('/post/update',  { id: this.post._id, repValue: this.repValue, date: Date.now() })
+      .then((response) => {
+        console.log(response.data)
+        this.repValue=null
+      }).catch((error) => {
+        console.error(error)
+      })
+
+    console.log(this.repValue)
+    },
+
+    /*       async updateExercise() {
         try {
-          await axios.delete(`/post/delete/${this.post._id}`);
-          this.deleteExerciseFrontend(this.post._id);
-          this.$toast.success(
-            `${this.post.name} ${this.post.imageURL} was deleted sucesfully!`,
-            {
-              position: "top-center",
-              timeout: 4369,
-              closeOnClick: true,
-              pauseOnFocusLoss: true,
-              pauseOnHover: true,
-              draggable: true,
-              draggablePercent: 1.08,
-              showCloseButtonOnHover: false,
-              hideProgressBar: true,
-              closeButton: "button",
-              icon: true,
-              rtl: false,
-            }
-          );
+          await axios.put(`/post/update/${this.post._id}`);
+
         } catch (error) {
-          console.log(error);
+          
         }
-      },
-
-
-
-
-
-
-
-
-
+      } */
   },
 };
 </script>
 <style scoped>
-*{
+* {
   margin: 0;
 }
 .inline {
@@ -129,19 +140,16 @@ export default {
 .v-responsive__sizer {
   padding: 0 !important;
 }
-.v-container{
+.v-container {
   padding: 0;
 }
-.layout{
-
+.layout {
 }
 
-.card-title{
+.card-title {
   background-color: rgba(0, 0, 0, 0.521);
   padding: 5px 10px;
   color: white;
   border-radius: 5px;
 }
-
-
 </style>
