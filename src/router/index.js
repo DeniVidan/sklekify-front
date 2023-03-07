@@ -6,6 +6,7 @@ import SignIn from '../views/SignIn.vue'
 import UserProfile from '../views/UserProfile.vue'
 import UserWorkout from '../views/UserWorkout.vue'
 import UserProgress from '../views/UserProgress.vue'
+import { Auth } from '@/services/index'
 
 Vue.use(VueRouter)
 
@@ -54,6 +55,21 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeResolve((to, from, next) => {
+  const publicSite = ["/signin", "/signup"]
+  const loginRequired = !publicSite.includes(to.path)
+  const user = Auth.getUser()
+
+
+  if (!user && loginRequired) {
+    next('/signin');
+    return;
+  }
+  
+  next();
+
 })
 
 export default router

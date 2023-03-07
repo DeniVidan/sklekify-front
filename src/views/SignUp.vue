@@ -60,7 +60,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
-import axios from "axios";
+import { ServiceAuth } from "@/services/index.js";
 
 export default {
   name: "SignUp",
@@ -147,7 +147,7 @@ export default {
     },
 
     async addUser() {
-      await axios
+      await ServiceAuth
         .post("/add/user", {
           firstname: this.Fname,
           lastname: this.Lname,

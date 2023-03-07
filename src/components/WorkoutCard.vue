@@ -1,11 +1,11 @@
 <template>
   <div>
     <v-layout class="layout ma-2">
-      <v-card class="mx-auto" max-width="400">
+      <v-card class="mx-auto" max-width="400" min-width="400">
         <v-img
           class="white--text align-end"
           height="200px"
-          :src="post.imageURL"
+          :src="this.post.imageURL"
         >
           <v-card-title class="mt-0" v-model="name">
             <p class="card-title">
@@ -30,7 +30,9 @@
               min="0"
             />
 
-            <v-btn class="ml-2" color="success" @click="updateData()"> submit </v-btn>
+            <v-btn class="ml-2" color="success" @click="updateData()">
+              submit
+            </v-btn>
           </div>
         </v-card-text>
 
@@ -44,7 +46,7 @@
   </div>
 </template>
 <script>
-import axios from "axios";
+import { Service } from "@/services/index.js";
 
 export default {
   name: "WorkoutCard",
@@ -61,62 +63,36 @@ export default {
   }),
 
   methods: {
-
-    proba() {
-
-    },
-
+    proba() {},
 
     async deleteExercise() {
       try {
-        await axios.delete(`/post/delete/${this.post._id}`);
+        await Service.delete(`/post/delete/${this.post._id}`);
         this.deleteExerciseFrontend(this.post._id);
-        this.$toast.success(
-          `${this.post.name} ${this.post.imageURL} was deleted sucesfully!`,
-          {
-            position: "top-center",
-            timeout: 4369,
-            closeOnClick: true,
-            pauseOnFocusLoss: true,
-            pauseOnHover: true,
-            draggable: true,
-            draggablePercent: 1.08,
-            showCloseButtonOnHover: false,
-            hideProgressBar: true,
-            closeButton: "button",
-            icon: true,
-            rtl: false,
-          }
-        );
       } catch (error) {
         console.log(error);
       }
     },
 
     async updateData() {
-      
-      let id = this.post._id
-      console.log(id)
+      let id = this.post._id;
+      console.log(id, "Date.now(): ", Date.now());
 
-    await axios.post('/post/update',  { id: this.post._id, repValue: this.repValue, date: Date.now() })
-      .then((response) => {
-        console.log(response.data)
-        this.repValue=null
-      }).catch((error) => {
-        console.error(error)
+      await Service.post("/post/update", {
+        id: this.post._id,
+        repValue: this.repValue,
+        date: Date.now(),
       })
+        .then((response) => {
+          console.log(response.data);
+          this.repValue = null;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
 
-    console.log(this.repValue)
+      console.log(this.repValue);
     },
-
-    /*       async updateExercise() {
-        try {
-          await axios.put(`/post/update/${this.post._id}`);
-
-        } catch (error) {
-          
-        }
-      } */
   },
 };
 </script>

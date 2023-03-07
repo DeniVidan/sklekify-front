@@ -3,6 +3,7 @@
     <h1>Sign in</h1>
     <br />
     <v-text-field
+      type="email"
       v-model="email"
       :error-messages="emailErrors"
       label="E-mail"
@@ -32,7 +33,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
-import axios from "axios";
+import { Auth } from "@/services/index.js"
 
 export default {
   name: "SignIn",
@@ -80,7 +81,7 @@ export default {
 
   methods: {
     submit() {
-      this.$v.$touch();
+
       this.login();
     },
     clear() {
@@ -88,21 +89,23 @@ export default {
       this.email = "";
       this.password = "";
     },
-    async login() {
-      await axios
-        .post("/auth/user", {
-          email: this.email,
-          password: this.password,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
 
-      console.log();
+
+
+    async login() {
+      let success = await Auth.login(this.email, this.password)
+      console.log("rezultat prijave: ", success)
+
+      if (success == true) {
+        this.$router.push({path: "/"})
+      }
+
+      
     },
+
+
+
+
   },
 };
 </script>

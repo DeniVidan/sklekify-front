@@ -6,39 +6,45 @@
           v-model="group"
           active-class="deep-blue--text text--accent-4"
         >
-          <router-link to="/">
+          <router-link v-if="auth.authenticated" to="/">
             <v-list-item to="/" link>
               <v-list-item-title>Today's check in</v-list-item-title>
             </v-list-item>
           </router-link>
 
-          <router-link to="/workouts">
+          <router-link v-if="auth.authenticated" to="/workouts">
             <v-list-item to="/workouts" link>
               <v-list-item-title>Workouts</v-list-item-title>
             </v-list-item>
           </router-link>
 
-          <router-link to="/progress">
+          <router-link v-if="auth.authenticated" to="/progress">
             <v-list-item to="/progress" link>
               <v-list-item-title>Progress</v-list-item-title>
             </v-list-item>
           </router-link>
 
-          <router-link to="/profile">
+          <router-link v-if="auth.authenticated" to="/profile">
             <v-list-item to="/profile" link>
               <v-list-item-title>Profile</v-list-item-title>
             </v-list-item>
           </router-link>
 
-          <router-link to="/signin">
-            <v-list-item to="/signin" link>
+          <router-link v-if="!auth.authenticated" to="signin">
+            <v-list-item to="" link>
               <v-list-item-title> Sign in </v-list-item-title>
             </v-list-item>
           </router-link>
 
-          <router-link to="/signup">
-            <v-list-item to="/signup" link>
+          <router-link v-if="!auth.authenticated" to="/signup">
+            <v-list-item to="signup" link>
               <v-list-item-title> Sign up </v-list-item-title>
+            </v-list-item>
+          </router-link>
+
+          <router-link v-if="auth.authenticated" to="">
+            <v-list-item to="" link>
+              <v-list-item-title @click="logout"> Sign out </v-list-item-title>
             </v-list-item>
           </router-link>
         </v-list-item-group>
@@ -134,8 +140,9 @@
 
 <script>
 import store from "@/store.js";
-import axios from "axios";
+
 import imageCompression from "browser-image-compression";
+import { Auth, Service } from "@/services/index.js";
 
 export default {
   name: "App",
@@ -150,6 +157,7 @@ export default {
       imgURL: "",
       base64CompressedImage: null,
       selectedImage: null,
+      auth: Auth.state,
     };
   },
 
@@ -163,12 +171,20 @@ export default {
 
     async postExercise() {
       try {
-        const res = await axios.post("/post/add", {
-          name: this.exerciseName,
-          imageURL: this.base64CompressedImage,
-        });
-
-        console.log(res.data);
+        if (!this.base64CompressedImage && this.exerciseName) {
+          await Service.post("/post/add", {
+            name: this.exerciseName,
+            
+          });
+        }
+        else {
+          await Service.post("/post/add", {
+            name: this.exerciseName,
+            imageURL: this.base64CompressedImage,
+          });
+        }
+        this.$router.go();
+        //console.log(res.data);
       } catch (error) {
         console.log(error.response.data);
         this.error = error.response.data.msg;
@@ -176,6 +192,7 @@ export default {
     },
 
     async handleImageUpload(event) {
+      //console.log(event)
       console.log(event.target.files[0]);
 
       const imageFile = event.target.files[0];
@@ -201,6 +218,7 @@ export default {
 
         let rawImg;
         reader.onloadend = () => {
+          //console.log(reader)
           rawImg = reader.result;
           this.base64CompressedImage = rawImg;
           /*  console.log("ttt", rawImg); */
@@ -213,18 +231,17 @@ export default {
             this.selectedImage = e.target.result;
           };
           /* reader.readAsDataURL(input.files[0]); */
-
-
         }
       } catch (error) {
         console.log(error);
       }
     },
-
-
-
-
+    logout() {
+      Auth.logout();
+      this.$router.go();
+    },
   },
+
   components: {},
 };
 </script>
