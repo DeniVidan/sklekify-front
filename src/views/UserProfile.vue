@@ -9,23 +9,19 @@
 
         <div class="profile-pic">
           <label class="-label" for="file">
-            <span class="glyphicon glyphicon-camera"></span>
+            <span class="glyphicon glyphicon-camera">halo</span>
             <span>Change Image</span>
           </label>
-          <input id="file" type="file" @onchange="loadFile(event)" />
-          <img :src="this.user.imageURL" id="output" width="200" />
+          <input id="file" type="file" @change="handleImageUpload" />
+          <img
+            class="current-image"
+            :src="this.currentImage"
+            id="output"
+            width="200"
+          />
         </div>
-
-        <input
-          type="file"
-          accept="image/*"
-          @change="handleImageUpload"
-          placeholder="Upload Profile Picture"
-        />
+        <div style="text-align: center">{{ this.user.email }}</div>
       </v-col>
-      <div>
-        <img width="300px" v-bind:src="this.selectedImage" />
-      </div>
 
       <v-col cols="12" sm="6" md="8">
         <v-form>
@@ -44,14 +40,26 @@
 
           <v-text-field
             v-model="old_password"
-            label="Old password"
+            :type="show1 ? 'text' : 'password'"
+            label="Current password"
             @blur="updateProfile"
+            
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            hint="At least 8 characters"
+            counter
+            @click:append="show1 = !show1"
           ></v-text-field>
 
           <v-text-field
             v-model="new_password"
+            :type="show2 ? 'text' : 'password'"
             label="New password"
             @blur="updateProfile"
+            
+            :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+            hint="At least 8 characters"
+            counter
+            @click:append="show2 = !show2"
           ></v-text-field>
 
           <div>
@@ -70,7 +78,6 @@ import imageCompression from "browser-image-compression";
 import { Service } from "@/services/index.js";
 //import imageCompressor from "vue-image-compressor";
 
-
 export default {
   name: "UserProfile",
 
@@ -80,36 +87,31 @@ export default {
       newLastname: "",
       new_password: "",
       old_password: "",
-      password: "",
+      show1: false,
+      show2: false,
       user: {},
-      profileImage: "",
       profileImageUpload: null,
       nameRules: {
         required: (value) => !!value || "Required.",
       },
 
-      img: "",
+      currentImage: null,
       scale: 100,
       quality: 50,
       originalSize: true,
-      original: {},
-      proba:
-        "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pexels.com%2Fsearch%2Fprofile%2520picture%2F&psig=AOvVaw2S1ZfM4Zv7laQ_1tEfyWpZ&ust=1675351738431000&source=images&cd=vfe&ved=0CBAQjRxqFwoTCOCskNzR9PwCFQAAAAAdAAAAABAE",
-      selectedImage: null,
     };
   },
-  methods: {
-    async uploadProfileImage() {
-      this.imgToBase64();
-    },
-    updateProfile() {
-      console.log(this.newFirstname, this.newLastname, this.old_password, this.new_password)
-    },
 
-    loadFile(event) {
-      console.log("event: ", event);
-      let image = document.getElementById("output");
-      image.src = URL.createObjectURL(event.target.files[0]);
+
+
+  methods: {
+    updateProfile() {
+      console.log(
+        this.newFirstname,
+        this.newLastname,
+        this.old_password,
+        this.new_password
+      );
     },
 
     async handleImageUpload(event) {
@@ -149,7 +151,7 @@ export default {
         let input = event.target;
         if (input.files && input.files[0]) {
           reader.onload = (e) => {
-            this.selectedImage = e.target.result;
+            this.currentImage = e.target.result;
           };
           /* reader.readAsDataURL(input.files[0]); */
         }
@@ -160,29 +162,27 @@ export default {
 
     async getUser() {
       let user = await Service.get("/users");
-      this.newFirstname = user.data.firstname
-      this.newLastname = user.data.lastname
+      this.newFirstname = user.data.firstname;
+      this.newLastname = user.data.lastname;
+      this.currentImage = user.data.imageURL;
       this.user = user.data;
       console.log("getUser: ", user.data);
     },
 
     async updateUser() {
-
       try {
         await Service.patch("/user/edit", {
           firstname: this.newFirstname,
           lastname: this.newLastname,
           old_password: this.old_password,
           new_password: this.new_password,
-          /* imageURL: this.user.data.imageURL, */
+          imageURL: this.currentImage,
         });
 
         console.log("userUpdate: ", this.user);
       } catch (error) {
         console.log(error.response);
       }
-      
-      
     },
 
     test() {
@@ -213,6 +213,9 @@ export default {
   position: relative;
   transition: all 0.3s ease;
 }
+.current-image {
+  border: 4px solid rgb(12, 242, 12);
+}
 .profile-pic input {
   display: none;
 }
@@ -227,8 +230,8 @@ export default {
 }
 .profile-pic .-label {
   cursor: pointer;
-  height: 165px;
-  width: 165px;
+  height: 185px;
+  width: 185px;
 }
 .profile-pic:hover .-label {
   display: flex;

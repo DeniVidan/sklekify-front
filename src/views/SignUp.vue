@@ -147,24 +147,28 @@ export default {
     },
 
     async addUser() {
-      await ServiceAuth
-        .post("/add/user", {
-          firstname: this.Fname,
-          lastname: this.Lname,
-          email: this.email,
-          password: this.password,
-        })
-        .then((response) => {
-          console.log(response.data);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      let response = await ServiceAuth.post("/add/user", {
+        firstname: this.Fname,
+        lastname: this.Lname,
+        email: this.email,
+        password: this.password,
+      })
 
-      console.log();
+          
+          let user = response.data;
+          console.log("userhaha: ", user);
+          localStorage.setItem("user", JSON.stringify(user));
+
+
+      if (user) {
+        this.$router.push({path: "/"})
+      } else {
+        this.$router.push({path: "/signin"})
+      }
+
     },
 
-/*     async getEmail() {
+    /*     async getEmail() {
       try {
         const { data: existingUser } = await axios.get(
           `/users?email=${this.email}`
