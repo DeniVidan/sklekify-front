@@ -171,12 +171,12 @@ export default {
 
     async updateUser() {
       try {
-        await Service.patch("/user/edit", {
+        await Service.put("/user/edit", {
           firstname: this.newFirstname,
           lastname: this.newLastname,
           old_password: this.old_password,
           new_password: this.new_password,
-          imageURL: this.currentImage,
+          imageURL: this.currentImage
         });
 
         console.log("userUpdate: ", this.user);
