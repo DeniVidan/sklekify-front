@@ -43,7 +43,6 @@
             :type="show1 ? 'text' : 'password'"
             label="Current password"
             @blur="updateProfile"
-            
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             hint="At least 8 characters"
             counter
@@ -55,7 +54,6 @@
             :type="show2 ? 'text' : 'password'"
             label="New password"
             @blur="updateProfile"
-            
             :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
             hint="At least 8 characters"
             counter
@@ -101,8 +99,6 @@ export default {
       originalSize: true,
     };
   },
-
-
 
   methods: {
     updateProfile() {
@@ -171,13 +167,20 @@ export default {
 
     async updateUser() {
       try {
-        await Service.put("/user/edit", {
-          firstname: this.newFirstname,
-          lastname: this.newLastname,
-          old_password: this.old_password,
-          new_password: this.new_password,
-          imageURL: this.currentImage
-        });
+        if (this.new_password && this.old_password && this.currentImage) {
+          await Service.put("/user/edit", {
+            firstname: this.newFirstname,
+            lastname: this.newLastname,
+            old_password: this.old_password,
+            new_password: this.new_password,
+            imageURL: this.currentImage,
+          });
+        } else {
+          await Service.put("/user/edit", {
+
+            imageURL: this.currentImage,
+          });
+        }
 
         console.log("userUpdate: ", this.user);
       } catch (error) {

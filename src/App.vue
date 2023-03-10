@@ -58,6 +58,7 @@
       <v-dialog v-model="dialog" persistent max-width="600px">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
+            v-if="isHomeRoute"
             v-bind="attrs"
             v-on="on"
             style="padding-left: 0px !important"
@@ -65,6 +66,7 @@
             color="blue lighten-3"
           >
             <v-btn
+              
               v-bind="attrs"
               v-on="on"
               width="40px"
@@ -144,6 +146,7 @@ import store from "@/store.js";
 import imageCompression from "browser-image-compression";
 import { Auth, Service } from "@/services/index.js";
 
+
 export default {
   name: "App",
 
@@ -161,7 +164,6 @@ export default {
     };
   },
 
-  mounted() {},
   methods: {
     test() {
       this.dialog = false;
@@ -174,10 +176,8 @@ export default {
         if (!this.base64CompressedImage && this.exerciseName) {
           await Service.post("/post/add", {
             name: this.exerciseName,
-            
           });
-        }
-        else {
+        } else {
           await Service.post("/post/add", {
             name: this.exerciseName,
             imageURL: this.base64CompressedImage,
@@ -240,9 +240,25 @@ export default {
       Auth.logout();
       this.$router.go();
     },
+
   },
 
   components: {},
+
+  computed: {
+    isHomeRoute() {
+      if (this.$route.path === "/"){
+        return true
+      } else return false
+      
+    },
+  },
+
+
+
+  mounted() {
+
+  },
 };
 </script>
 

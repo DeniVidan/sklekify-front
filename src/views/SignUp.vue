@@ -155,7 +155,7 @@ export default {
       })
 
           
-          let user = response.data;
+          let user = response;
           console.log("userhaha: ", user);
           localStorage.setItem("user", JSON.stringify(user));
 
