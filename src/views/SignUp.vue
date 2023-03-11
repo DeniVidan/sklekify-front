@@ -2,6 +2,10 @@
   <form>
     <h1>Sign up</h1>
     <br />
+
+    <div style="display: flex; justify-content: center; background-color: rgb(248, 81, 81);">
+      <span class="password-error">{{ error }}</span>
+    </div>
     <v-text-field
       v-model="Fname"
       :error-messages="fnameErrors"
@@ -85,7 +89,7 @@ export default {
     password: "",
     show1: false,
     checkbox: false,
-
+    error: "",
     rules: {
       required: (value) => !!value || "Required.",
       min: (v) => v.length >= 8 || "Min 8 characters",
@@ -103,17 +107,15 @@ export default {
     fnameErrors() {
       const errors = [];
       if (!this.$v.Fname.$dirty) return errors;
-      !this.$v.Fname.maxLength &&
-        errors.push("Name must be at most 10 characters long");
-      !this.$v.Fname.required && errors.push("Name is required.");
+
+      !this.$v.Fname.required && errors.push("Firstname is required.");
       return errors;
     },
     lnameErrors() {
       const errors = [];
       if (!this.$v.Lname.$dirty) return errors;
-      !this.$v.Lname.maxLength &&
-        errors.push("Name must be at most 10 characters long");
-      !this.$v.Lname.required && errors.push("Name is required.");
+
+      !this.$v.Lname.required && errors.push("Lastname is required.");
       return errors;
     },
     emailErrors() {
@@ -146,27 +148,36 @@ export default {
       this.checkbox = false;
     },
 
-    async addUser() {
-      let response = await ServiceAuth.post("/add/user", {
-        firstname: this.Fname,
-        lastname: this.Lname,
-        email: this.email,
-        password: this.password,
-      })
+async addUser() {
+  let userAdded = false;
+  try {
+    let response = await ServiceAuth.post("/add/user", {
+      firstname: this.Fname,
+      lastname: this.Lname,
+      email: this.email,
+      password: this.password,
+    });
 
-          
-          let user = response;
-          console.log("userhaha: ", user);
-          localStorage.setItem("user", JSON.stringify(user));
+    console.log(response);
+    let user = response.data;
+    console.log("userhaha: ", user);
+    localStorage.setItem("user", JSON.stringify(user));
+    userAdded = true;
+  } catch (error) {
+    //console.log(error.response.data.error);
+    if (this.email != ""){
+      this.error = error.response.data.error
+    }
+    
+    userAdded = false;
+  }
 
-
-      if (user) {
-        this.$router.push({path: "/"})
-      } else {
-        this.$router.push({path: "/signin"})
-      }
-
-    },
+  if (userAdded) {
+    this.$router.push({ path: "/" });
+  } else {
+    return
+  }
+},
 
     /*     async getEmail() {
       try {
@@ -198,6 +209,10 @@ form {
   width: 50%;
   background-color: rgba(0, 0, 0, 0.096);
   border-radius: 5px;
+}
+.password-error{
+/*   background-color: rgb(248, 81, 81); */
+  color: white;
 }
 @media screen and (max-width: 900px) {
   form {

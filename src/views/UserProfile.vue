@@ -9,7 +9,7 @@
 
         <div class="profile-pic">
           <label class="-label" for="file">
-            <span class=""> <i class="fa-light fa-camera"></i></span>
+            <span class="mdi mdi-camera-plus-outline" style="font-size:25px"></span>
             <span>Change Image</span>
           </label>
           <input id="file" type="file" @change="handleImageUpload" />
@@ -269,7 +269,7 @@ export default {
   height: 185px;
   width: 185px;
 }
-.profile-pic:hover .-label {
+.-label:hover {
   display: flex;
   justify-content: center;
   align-items: center;

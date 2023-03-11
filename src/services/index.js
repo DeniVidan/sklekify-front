@@ -3,7 +3,7 @@ import axios from "axios";
 
 let ServiceAuth = axios.create({
   baseURL: "http://localhost:3000",
-  timeout: 1000,
+  timeout: 10000,
 });
 
 let Service = axios.create({
@@ -33,28 +33,20 @@ Service.interceptors.response.use(
 
 let Auth = {
   async login(email, password) {
-    let response = await ServiceAuth.post("/auth/user", {
-      email: email,
-      password: password,
-    })
-      .then((response) => {
-        console.log("trulululu:", response.data);
-        localStorage.setItem("user", JSON.stringify(response.data));
-        
-      })
-      .catch((error) => {
-        console.error(error.response.data.error);
+    try {
+      let response = await ServiceAuth.post("/auth/user", {
+        email: email,
+        password: password,
       });
-      if (response.data) {
-          return true;
-        } else {
-          return false;
-        }
-
-
-    /*    let user = response.data;
-      console.log("userrrrrrrrrrrrrrrrrrrrr: ", user);
-      localStorage.setItem("user", JSON.stringify(user)); */
+      localStorage.setItem("user", JSON.stringify(response.data));
+      return true;
+    } catch (error) {
+      console.error(error.response.data.error);
+      return {
+        false: false,
+        error: error.response.data.error
+      };
+    }
   },
 
   logout() {

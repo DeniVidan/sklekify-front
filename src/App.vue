@@ -7,7 +7,7 @@
           active-class="deep-blue--text text--accent-4"
         >
           <router-link v-if="auth.authenticated" to="/">
-            <v-list-item to="/" link>
+            <v-list-item @click="refresh()" to="/" link>
               <v-list-item-title>Today's check in</v-list-item-title>
             </v-list-item>
           </router-link>
@@ -55,10 +55,10 @@
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title>Sklekify</v-toolbar-title>
 
-      <v-dialog v-model="dialog" persistent max-width="600px">
+      <v-dialog v-model="dialog" max-width="600px">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            v-if="isHomeRoute"
+            v-if="$route.path === '/'"
             v-bind="attrs"
             v-on="on"
             style="padding-left: 0px !important"
@@ -66,7 +66,6 @@
             color="blue lighten-3"
           >
             <v-btn
-              
               v-bind="attrs"
               v-on="on"
               width="40px"
@@ -146,7 +145,6 @@ import store from "@/store.js";
 import imageCompression from "browser-image-compression";
 import { Auth, Service } from "@/services/index.js";
 
-
 export default {
   name: "App",
 
@@ -186,7 +184,7 @@ export default {
         this.$router.go();
         //console.log(res.data);
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error);
         this.error = error.response.data.msg;
       }
     },
@@ -240,25 +238,27 @@ export default {
       Auth.logout();
       this.$router.go();
     },
+  refresh(){
+    this.$router.go();
+  }
 
   },
 
   components: {},
 
   computed: {
-    isHomeRoute() {
-      if (this.$route.path === "/"){
+/*     isHomeRoute() {
+      console.log(this.$route.path === "/")
+      if(this.$route.path === "/"){
         return true
-      } else return false
-      
-    },
+      }else{
+        return false
+      }
+
+    }, */
   },
 
-
-
-  mounted() {
-
-  },
+  mounted() {},
 };
 </script>
 
