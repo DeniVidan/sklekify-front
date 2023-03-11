@@ -9,7 +9,7 @@
 
         <div class="profile-pic">
           <label class="-label" for="file">
-            <span class="glyphicon glyphicon-camera">halo</span>
+            <span class=""> <i class="fa-light fa-camera"></i></span>
             <span>Change Image</span>
           </label>
           <input id="file" type="file" @change="handleImageUpload" />
@@ -21,22 +21,31 @@
           />
         </div>
         <div style="text-align: center">{{ this.user.email }}</div>
+        <div style="display: grid; !important">
+          <v-btn color="primary" @click="updateUserPhoto">Update photo</v-btn>
+        </div>
       </v-col>
 
       <v-col cols="12" sm="6" md="8">
         <v-form>
-          <v-text-field
-            v-model="newFirstname"
-            label="New firstname"
-            :rules="[nameRules.required]"
-            @blur="updateProfile"
-          ></v-text-field>
-          <v-text-field
-            v-model="newLastname"
-            label="New lastname"
-            :rules="[nameRules.required]"
-            @blur="updateProfile"
-          ></v-text-field>
+          <div style="margin-bottom: 100px">
+            <v-text-field
+              v-model="newFirstname"
+              label="New firstname"
+              :rules="[nameRules.required]"
+              @blur="updateProfile"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="newLastname"
+              label="New lastname"
+              :rules="[nameRules.required]"
+              @blur="updateProfile"
+            ></v-text-field>
+            <v-btn color="primary" style="float: right" @click="updateUserName"
+              >Update name</v-btn
+            >
+          </div>
 
           <v-text-field
             v-model="old_password"
@@ -61,8 +70,8 @@
           ></v-text-field>
 
           <div>
-            <v-btn color="primary" style="float: right" @click="updateUser"
-              >Update</v-btn
+            <v-btn color="primary" style="float: right" @click="updateUserPassword"
+              >Update password</v-btn
             >
           </div>
         </v-form>
@@ -102,12 +111,7 @@ export default {
 
   methods: {
     updateProfile() {
-      console.log(
-        this.newFirstname,
-        this.newLastname,
-        this.old_password,
-        this.new_password
-      );
+
     },
 
     async handleImageUpload(event) {
@@ -165,19 +169,47 @@ export default {
       console.log("getUser: ", user.data);
     },
 
-    async updateUser() {
+    async updateUserName() {
       try {
-        if (this.new_password && this.old_password && this.currentImage) {
-          await Service.put("/user/edit", {
+        if (
+          this.newFirstname != this.user.firstname ||
+          this.newLastname != this.user.lastname
+        ) {
+          await Service.put("/user/edit/fname", {
             firstname: this.newFirstname,
             lastname: this.newLastname,
+          });
+        } else {
+          console.log("Minimalno jedno ime promjeniti");
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
+    async updateUserPhoto() {
+      try {
+        if (this.currentImage) {
+          await Service.put("/user/edit/image", {
+            imageURL: this.currentImage
+          });
+        } else {
+          console.log("nece slika");
+        }
+      } catch (error) {
+        console.log(error.response);
+      }
+    },
+
+    async updateUserPassword() {
+      try {
+        if (this.new_password && this.old_password) {
+          await Service.put("/user/edit", {
             old_password: this.old_password,
             new_password: this.new_password,
-            imageURL: this.currentImage,
           });
         } else {
           await Service.put("/user/edit", {
-
             imageURL: this.currentImage,
           });
         }
@@ -187,6 +219,7 @@ export default {
         console.log(error.response);
       }
     },
+    
 
     test() {
       console.log(this.img);

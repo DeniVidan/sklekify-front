@@ -3,7 +3,7 @@
     <h1>Sign in</h1>
     <br />
     <v-text-field
-      type="email"
+      name="email"
       v-model="email"
       :error-messages="emailErrors"
       label="E-mail"
@@ -32,7 +32,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required, email } from "vuelidate/lib/validators";
+import { required, email, minLength } from "vuelidate/lib/validators";
 import { Auth } from "@/services/index.js"
 
 export default {
@@ -41,6 +41,7 @@ export default {
 
   validations: {
     email: { required, email },
+    password: { required, minLength: minLength(6) },
 
     checkbox: {
       checked(val) {
@@ -73,8 +74,8 @@ export default {
     passwordErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
-      // !this.$v.password.password && errors.push("Must be valid password");
-      // !this.$v.password.required && errors.push("Password is required");
+/*       !this.$v.password.password && errors.push("Must be valid password");
+      !this.$v.password.required && errors.push("Password is required"); */
       return errors;
     },
   },
@@ -97,6 +98,7 @@ export default {
       console.log("rezultat prijave: ", success)
 
       if (success == true) {
+        console.log("istina")
         this.$router.push({path: "/"})
       }
 

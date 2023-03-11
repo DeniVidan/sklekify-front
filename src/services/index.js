@@ -6,49 +6,55 @@ let ServiceAuth = axios.create({
   timeout: 1000,
 });
 
-
 let Service = axios.create({
   baseURL: "http://localhost:3000",
   timeout: 1000,
 });
 
 Service.interceptors.request.use((request) => {
-  const { token } = JSON.parse(localStorage.getItem('user'))
-  console.log("daj token: ", token)
-    try {
-        request.headers['Authorization'] = 'Bearer ' + token;
-    } catch (e) {
-        console.error(e);
-    }
-    return request;
+  const { token } = JSON.parse(localStorage.getItem("user"));
+  console.log("daj token: ", token);
+  try {
+    request.headers["Authorization"] = "Bearer " + token;
+  } catch (e) {
+    console.error(e);
+  }
+  return request;
 });
 
 Service.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response.status == 401 || error.response.status == 403){
-        Auth.logout()
+    if (error.response.status == 401 || error.response.status == 403) {
+      Auth.logout();
     }
   }
 );
-
 
 let Auth = {
   async login(email, password) {
     let response = await ServiceAuth.post("/auth/user", {
       email: email,
       password: password,
-    });
+    })
+      .then((response) => {
+        console.log("trulululu:", response.data);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        
+      })
+      .catch((error) => {
+        console.error(error.response.data.error);
+      });
+      if (response.data) {
+          return true;
+        } else {
+          return false;
+        }
 
-    let user = response.data;
-    console.log("userrrrrrrrrrrrrrrrrrrrr: ", user);
-    localStorage.setItem("user", JSON.stringify(user));
 
-    if (user) {
-      return true;
-    } else {
-      return false;
-    }
+    /*    let user = response.data;
+      console.log("userrrrrrrrrrrrrrrrrrrrr: ", user);
+      localStorage.setItem("user", JSON.stringify(user)); */
   },
 
   logout() {
@@ -84,4 +90,4 @@ let Auth = {
   },
 };
 
-export { ServiceAuth, Service , Auth };
+export { ServiceAuth, Service, Auth };
