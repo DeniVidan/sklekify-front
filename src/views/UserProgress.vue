@@ -1,7 +1,6 @@
 <template>
-  <div>
-    progress
-    <div v-for="post in posts" :key="post._id">
+  <div class="">
+    <div class="workout-card" v-for="post in posts" :key="post._id">
       <progress-chart :post="post" />
     </div>
   </div>
@@ -49,4 +48,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+  .workout-card{
+    margin-bottom: 10px;
+    background-color: rgb(181, 182, 255);
+  }
+</style>
