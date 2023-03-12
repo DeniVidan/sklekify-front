@@ -113,6 +113,7 @@ export default {
       else if (success == true) {
         console.log("istina");
         this.$router.push({ path: "/" });
+        this.$router.go();
       }
       else if (success.false == false) {
         this.passwordError =  success.error

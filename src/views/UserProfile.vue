@@ -162,6 +162,7 @@ export default {
 
     async getUser() {
       let user = await Service.get("/users");
+      //console.log("daj user: ", user)
       this.newFirstname = user.data.firstname;
       this.newLastname = user.data.lastname;
       this.currentImage = user.data.imageURL;

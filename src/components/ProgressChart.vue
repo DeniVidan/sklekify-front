@@ -1,11 +1,14 @@
 <template>
   <div id="chart">
+    <div>{{ post.name }}</div>
     <apexchart
       type="line"
       height="350"
       :options="chartOptions"
       :series="series"
     ></apexchart>
+    {{ series[0].data }}
+    
   </div>
 </template>
 
@@ -16,18 +19,18 @@ export default {
   components: {
     apexchart: VueApexCharts,
   },
-  props: {},
+  props: {
+    post: Object
+  },
   data() {
     return {
+      /* reps: [], */
       series: [
         {
-          name: "High - 2013",
-          data: [28, 29, 33, 36, 32, 32, 33],
+          name: this.post.name,
+          data: [],
         },
-        {
-          name: "Low - 2013",
-          data: [12, 11, 14, 18, 17, 13, 13],
-        },
+
       ],
       chartOptions: {
         chart: {
@@ -67,17 +70,19 @@ export default {
           size: 1,
         },
         xaxis: {
-          categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+          
           title: {
             text: "Month",
           },
+          min: 1,
+          max: 21,
         },
         yaxis: {
           title: {
             text: "Temperature",
           },
-          min: 5,
-          max: 40,
+          min: 1,
+          max: 10,
         },
         legend: {
           position: "top",
@@ -89,7 +94,26 @@ export default {
       },
     };
   },
-  methods: {},
+  methods: {
+    repetitionSize(){
+      console.log("hmmm: ", this.series[0].name)
+/*       this.series[0].name = this.post.name
+      console.log("names: ", this.series[0].name) */
+      for(let i = 0; i < this.post.repetitions.length; i++){
+        this.series[0].data.push(this.post.repetitions[i].number)
+
+      }
+     
+      console.log("reps: ", this.series[0].data)
+
+    }
+
+  },
+
+  mounted(){
+    console.log("vjezba: ", this.post)
+    this.repetitionSize()
+  }
 };
 </script>
 
