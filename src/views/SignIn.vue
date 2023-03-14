@@ -116,7 +116,8 @@ export default {
         this.$router.go();
       }
       else if (success.false == false) {
-        this.passwordError =  success.error
+        if (success.error == 403)
+        this.passwordError = "Email and password do not match!"
         console.log(this.passwordError)
       }
     },

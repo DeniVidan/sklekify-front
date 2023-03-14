@@ -67,6 +67,9 @@ router.beforeResolve((to, from, next) => {
     next('/signin');
     return;
   }
+  else if(user && !loginRequired) {
+    next('/')
+  }
   
   next();
 

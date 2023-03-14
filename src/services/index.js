@@ -2,13 +2,15 @@ import axios from "axios";
 /* import $router from "@/router"; */
 
 let ServiceAuth = axios.create({
-  baseURL: "http://localhost:3000",
+  /* baseURL: "http://localhost:3000", */
+  baseURL: "https://sklekify-back-production.up.railway.app",
   timeout: 10000,
 });
 
 let Service = axios.create({
-  baseURL: "http://localhost:3000",
-  timeout: 1000,
+  /* baseURL: "http://localhost:3000", */
+  baseURL: "https://sklekify-back-production.up.railway.app",
+  timeout: 10000,
 });
 
 Service.interceptors.request.use((request) => {
@@ -22,14 +24,15 @@ Service.interceptors.request.use((request) => {
   return request;
 });
 
-Service.interceptors.response.use(
+/* Service.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response.status == 401 || error.response.status == 403) {
+      console.log("ajde daj mi: ", error.response.status);
       Auth.logout();
     }
   }
-);
+); */
 
 let Auth = {
   async login(email, password) {
@@ -41,10 +44,10 @@ let Auth = {
       localStorage.setItem("user", JSON.stringify(response.data));
       return true;
     } catch (error) {
-      console.error(error.response.data.error);
+      console.error("frontend da vidi: ", error.response.status);
       return {
         false: false,
-        error: error.response.data.error
+        error: error.response.status,
       };
     }
   },
