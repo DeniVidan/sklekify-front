@@ -9,7 +9,10 @@
 
         <div class="profile-pic">
           <label class="-label" for="file">
-            <span class="mdi mdi-camera-plus-outline" style="font-size:25px"></span>
+            <span
+              class="mdi mdi-camera-plus-outline"
+              style="font-size: 25px"
+            ></span>
             <span>Change Image</span>
           </label>
           <input id="file" type="file" @change="handleImageUpload" />
@@ -28,6 +31,10 @@
 
       <v-col cols="12" sm="6" md="8">
         <v-form>
+          <div id="error-message">
+            <span class="password-error">{{ error }}</span>
+          </div>
+
           <div style="margin-bottom: 100px">
             <v-text-field
               v-model="newFirstname"
@@ -70,7 +77,10 @@
           ></v-text-field>
 
           <div>
-            <v-btn color="primary" style="float: right" @click="updateUserPassword"
+            <v-btn
+              color="primary"
+              style="float: right"
+              @click="updateUserPassword"
               >Update password</v-btn
             >
           </div>
@@ -94,6 +104,7 @@ export default {
       newLastname: "",
       new_password: "",
       old_password: "",
+      error: "",
       show1: false,
       show2: false,
       user: {},
@@ -110,9 +121,7 @@ export default {
   },
 
   methods: {
-    updateProfile() {
-
-    },
+    updateProfile() {},
 
     async handleImageUpload(event) {
       //console.log(event)
@@ -180,8 +189,13 @@ export default {
             firstname: this.newFirstname,
             lastname: this.newLastname,
           });
+          this.error = "Successfully updated name !"
+          document.getElementById("error-message").style.backgroundColor = "#03DC00";
+
+          this
         } else {
           console.log("Minimalno jedno ime promjeniti");
+          this.error = "Change one name at least !"
         }
       } catch (error) {
         console.log(error.response);
@@ -192,7 +206,7 @@ export default {
       try {
         if (this.currentImage) {
           await Service.put("/user/edit/image", {
-            imageURL: this.currentImage
+            imageURL: this.currentImage,
           });
         } else {
           console.log("nece slika");
@@ -220,7 +234,6 @@ export default {
         console.log(error.response);
       }
     },
-    
 
     test() {
       console.log(this.img);
@@ -296,5 +309,11 @@ body {
 }
 body a:hover {
   text-decoration: none;
+}
+#error-message {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(248, 81, 81);
+  color: white;
 }
 </style>

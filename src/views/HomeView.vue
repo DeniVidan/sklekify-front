@@ -53,10 +53,16 @@ export default {
     deleteExerciseFrontend(id) {
       this.posts = this.posts.filter((exercise) => exercise._id !== id);
     },
+
+/*     show(){
+      console.log("dada: ", this.getPosts())
+    } */
+
   },
 
   mounted () {
     this.getPosts();
+/*     this.show() */
   }
 };
 </script>
