@@ -107,7 +107,7 @@ export default {
             },
           },
 
-          min: 1,
+          min: 0,
           max: null,
         },
         legend: {

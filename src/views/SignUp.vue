@@ -3,14 +3,14 @@
     <h1>Sign up</h1>
     <br />
 
-    <div
-      style="
-        display: flex;
-        justify-content: center;
-        background-color: rgb(248, 81, 81);
-      "
-    >
-      <span class="password-error">{{ error }}</span>
+    <div id="error-message">
+      <span>{{ error_password }}</span>
+    </div>
+    <div id="error-message">
+      <span>{{ error_email }}</span>
+    </div>
+        <div id="error-message">
+      <span>{{ error }}</span>
     </div>
     <v-text-field
       v-model="Fname"
@@ -93,9 +93,11 @@ export default {
     Lname: "",
     email: "",
     password: "",
+    error_password: "",
+    error_email: "",
+    error: "",
     show1: false,
     checkbox: false,
-    error: "",
     rules: {
       required: (value) => !!value || "Required.",
       min: (v) => v.length >= 8 || "Min 8 characters",
@@ -155,36 +157,47 @@ export default {
     },
 
     async addUser() {
+      this.error_password = ""
+      this.error_email = ""
+      this.error = ""
       let userAdded = false;
       try {
-        let response = await ServiceAuth.post("/add/user", {
-          firstname: this.Fname,
-          lastname: this.Lname,
-          email: this.email,
-          password: this.password,
-        });
+        if(this.Fname != "" && this.Lname != "" && this.email != "" && this.password != "" && this.checkbox != false){
+          if (this.password.length < 8) {
+          this.error_password = "Password must be over 8 characters !";
+        } else {
+          console.log("lozinka je više od 8 char !");
+          let response = await ServiceAuth.post("/add/user", {
+            firstname: this.Fname,
+            lastname: this.Lname,
+            email: this.email,
+            password: this.password,
+          });
 
-        console.log(response);
-        let user = response.data;
-        console.log("userhaha: ", user);
-        localStorage.setItem("user", JSON.stringify(user));
-        if (user){
-
-          userAdded = true
+          console.log(response);
+          let user = response.data;
+          console.log("userhaha: ", user);
+          localStorage.setItem("user", JSON.stringify(user));
+          if (user) {
+            userAdded = true;
+          }
         }
-      } catch (error) {
-        //console.log(error.response.data.error);
-        if (this.email != "") {
-          this.error = error.response.data.error;
+        }else{
+          this.error = "Please fill all the fields"
         }
         
+      } catch (error) {
+        console.log("daj email error: ", error.response.status);
+        if (error.response.status == 500) {
+          this.error_email = "Email already in use !";
+        }
       }
       if (userAdded == true) {
-          this.$router.push({ path: "/" });
-          this.$router.go();
-        } else {
-          return;
-        }
+        this.$router.push({ path: "/" });
+        this.$router.go();
+      } else {
+        return;
+      }
     },
 
     /*     async getEmail() {
@@ -221,6 +234,13 @@ form {
 .password-error {
   /*   background-color: rgb(248, 81, 81); */
   color: white;
+}
+#error-message {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(248, 81, 81);
+  color: white;
+  margin-bottom: 2px;
 }
 @media screen and (max-width: 900px) {
   form {

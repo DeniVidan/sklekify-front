@@ -6,6 +6,9 @@
           <img :src="this.selectedImage" alt="Profile Image" />
           <img :src="this.user.imageURL" alt="Profile Image" />
         </v-avatar> -->
+        <div id="error-message">
+          <span class="">{{ error_photo }}</span>
+        </div>
 
         <div class="profile-pic">
           <label class="-label" for="file">
@@ -31,8 +34,8 @@
 
       <v-col cols="12" sm="6" md="8">
         <v-form>
-          <div id="error-message">
-            <span class="password-error">{{ error }}</span>
+          <div id="error-message-name">
+            <span class="">{{ error_name }}</span>
           </div>
 
           <div style="margin-bottom: 100px">
@@ -52,6 +55,10 @@
             <v-btn color="primary" style="float: right" @click="updateUserName"
               >Update name</v-btn
             >
+          </div>
+
+          <div id="error-message">
+            <span class="">{{ error_password }}</span>
           </div>
 
           <v-text-field
@@ -104,7 +111,9 @@ export default {
       newLastname: "",
       new_password: "",
       old_password: "",
-      error: "",
+      error_name: "",
+      error_password: "",
+      error_photo: "",
       show1: false,
       show2: false,
       user: {},
@@ -124,6 +133,7 @@ export default {
     updateProfile() {},
 
     async handleImageUpload(event) {
+      this.error_photo = ""
       //console.log(event)
       console.log(event.target.files[0]);
 
@@ -189,13 +199,13 @@ export default {
             firstname: this.newFirstname,
             lastname: this.newLastname,
           });
-          this.error = "Successfully updated name !"
-          document.getElementById("error-message").style.backgroundColor = "#03DC00";
-
-          this
+          document.getElementById("error-message-name").style.backgroundColor = "#03DC00";
+          this.error_name = "Successfully updated name !";
+          
+          this.$router.go();
         } else {
           console.log("Minimalno jedno ime promjeniti");
-          this.error = "Change one name at least !"
+          this.error_name = "Change at least one name !";
         }
       } catch (error) {
         console.log(error.response);
@@ -208,11 +218,20 @@ export default {
           await Service.put("/user/edit/image", {
             imageURL: this.currentImage,
           });
+          document.getElementById("error-message").style.backgroundColor =
+            "#03DC00";
+          this.error_photo = "Successfully updated photo !";
+          
+          this.$router.go();
         } else {
           console.log("nece slika");
         }
       } catch (error) {
         console.log(error.response);
+        if (error.response.status == 500) {
+          console.log("Nije stavljena nova slika!");
+          this.error_photo = "You haven't changed image !";
+        }
       }
     },
 
@@ -223,15 +242,21 @@ export default {
             old_password: this.old_password,
             new_password: this.new_password,
           });
+          this.error_password = "Successfully updated password !";
+          document.getElementById("error-message").style.backgroundColor =
+            "#03DC00";
+          this.$router.go();
         } else {
-          await Service.put("/user/edit", {
-            imageURL: this.currentImage,
-          });
+          console.log("Promjeniti obije lozinke!");
+          this.error_password = "Please fill all the fields !";
         }
 
         console.log("userUpdate: ", this.user);
       } catch (error) {
-        console.log(error.response);
+        console.log(error.response.status);
+        if (error.response.status == 500) {
+          this.error_password = "Wrong old password !";
+        }
       }
     },
 
@@ -311,6 +336,12 @@ body a:hover {
   text-decoration: none;
 }
 #error-message {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(248, 81, 81);
+  color: white;
+}
+#error-message-name {
   display: flex;
   justify-content: center;
   background-color: rgb(248, 81, 81);

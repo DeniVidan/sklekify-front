@@ -77,7 +77,9 @@ export default {
     async updateData() {
       let id = this.post._id;
       console.log(id, "Date.now(): ", Date.now());
-
+      if (this.repValue == null){
+        this.repValue = 0
+      }
       await Service.post("/post/update", {
         id: this.post._id,
         repValue: this.repValue,
