@@ -7,6 +7,7 @@
           <workout-card 
             :post="post" 
             :deleteExerciseFrontend="deleteExerciseFrontend"
+            :disable_btn="disable_btn"
           />
         </div>
       </v-layout>
@@ -17,13 +18,16 @@
 <script>
 import WorkoutCard from "../components/WorkoutCard";
 import { Service } from "@/services/index.js";
+/* import moment from 'moment'; */
+
 
 export default {
   name: "HomePage",
   data() {
     return {
+      lastDateUploaded: null,
       posts: [],
-      
+      disable_btn: true,
     }
   },
 
@@ -36,7 +40,7 @@ export default {
     async getPosts() {
 
       try {
-
+        
         const res = await Service.get('/posts');
         this.posts = res.data;
         

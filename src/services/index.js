@@ -2,14 +2,14 @@ import axios from "axios";
 /* import $router from "@/router"; */
 
 let ServiceAuth = axios.create({
- /*  baseURL: "http://localhost:3000", */
-  baseURL: "https://sklekify-back-production.up.railway.app",
+  baseURL: "http://localhost:3000",
+ /*  baseURL: "https://sklekify-back-production.up.railway.app", */
   timeout: 10000,
 });
 
 let Service = axios.create({
-  /* baseURL: "http://localhost:3000", */
-  baseURL: "https://sklekify-back-production.up.railway.app",
+  baseURL: "http://localhost:3000",
+  /* baseURL: "https://sklekify-back-production.up.railway.app", */
   timeout: 10000,
 });
 

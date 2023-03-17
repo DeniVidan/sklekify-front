@@ -18,8 +18,11 @@
 
         <v-card-text class="text--primary">
           <div class="mb-3"><h2>Share todays progress:</h2></div>
-
+            <v-input v-if="!disable" style="color: green; font-size: 20px" success disabled>
+              Successfully submited
+            </v-input>
           <div class="inline">
+
             <v-text-field
               class="number-input"
               v-model="repValue"
@@ -30,8 +33,23 @@
               min="0"
             />
 
-            <v-btn class="ml-2" color="success" @click="updateData()">
+            <v-btn
+              v-if="disable"
+              class="ml-2"
+              color="success"
+              @click="updateData()"
+              :disabeled="disable"
+            >
               submit
+            </v-btn>
+
+            <v-btn
+              v-if="!disable"
+              class="ml-2"
+              color="primary"
+              @click="overwriteDate()"
+            >
+              Overwrite
             </v-btn>
           </div>
         </v-card-text>
@@ -47,6 +65,7 @@
 </template>
 <script>
 import { Service } from "@/services/index.js";
+import moment from "moment";
 
 export default {
   name: "WorkoutCard",
@@ -54,12 +73,15 @@ export default {
   props: {
     post: Object,
     deleteExerciseFrontend: Function,
+    disable_btn: Boolean,
   },
 
   data: () => ({
     name: "",
     repValue: null,
     image: "",
+    disable: undefined,
+    lastDateUploaded: null,
   }),
 
   methods: {
@@ -74,16 +96,39 @@ export default {
       }
     },
 
+    async overwriteDate() {
+      if (this.disable == false) {
+        //console.log("repetitions", this.post.repetitions[this.post.repetitions.length - 1]);
+        if (this.repValue == null){
+          this.repValue = 0
+        }
+        await Service.post("/post/overwrite", {
+        id: this.post._id,
+        id_rep: this.post.repetitions._id,
+        repValue: this.repValue,
+      })
+        .then((response) => {
+          console.log(response.data);
+          this.repValue = null;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+        
+      } else {
+        console.log("je true");
+      }
+    },
+
     async updateData() {
-      let id = this.post._id;
-      console.log(id, "Date.now(): ", Date.now());
-      if (this.repValue == null){
-        this.repValue = 0
+      //let time = moment().format();
+      //console.log("Date.now(): ", time);
+      if (this.repValue == null) {
+        this.repValue = 0;
       }
       await Service.post("/post/update", {
         id: this.post._id,
         repValue: this.repValue,
-        date: Date.now(),
       })
         .then((response) => {
           console.log(response.data);
@@ -95,9 +140,40 @@ export default {
 
       console.log(this.repValue);
     },
+
+    try() {
+      if (this.post.repetitions.length != 0) {
+        /*       if (this.disable_btn == true){
+        this.disable = true
+      } else this.disable = false
+      console.log("ajde daj: ", this.post, this.disable) */
+
+        console.log("idemo: ", this.post);
+        this.lastDateUploaded = this.post.updatedAt.split("T")[0].split("-")[2];
+        //console.log("daj mi date: ", this.lastDateUploaded);
+        //console.log("daj mi date2: ", this.post.updatedAt);
+        //console.log("daj mi date3: ", this.lastDateUploaded);
+
+        //console.log("conzol pokazi: ", moment().format("l").split("/")[1]);
+
+        if (this.lastDateUploaded != moment().format("l").split("/")[1]) {
+          this.disable = true;
+          console.log(this.disable);
+        } else {
+          this.disable = false;
+        }
+      } else {
+        this.disable = true;
+      }
+    },
+  },
+
+  mounted() {
+    this.try();
   },
 };
 </script>
+
 <style scoped>
 * {
   margin: 0;
