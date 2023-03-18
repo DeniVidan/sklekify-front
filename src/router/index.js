@@ -6,6 +6,7 @@ import SignIn from '../views/SignIn.vue'
 import UserProfile from '../views/UserProfile.vue'
 import UserWorkout from '../views/UserWorkout.vue'
 import UserProgress from '../views/UserProgress.vue'
+import AboutView from '../views/AboutView.vue'
 import { Auth } from '@/services/index'
 
 Vue.use(VueRouter)
@@ -18,11 +19,8 @@ const routes = [
   },
   {
     path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    name: 'AboutPage',
+    component: AboutView
   },
   {
     path: '/signup',
@@ -60,16 +58,24 @@ const router = new VueRouter({
 router.beforeResolve((to, from, next) => {
   const publicSite = ["/signin", "/signup"]
   const loginRequired = !publicSite.includes(to.path)
+
+  const about = ["/about"]
+  const isAbout = about.includes(to.path)
+  console.log(isAbout)
   const user = Auth.getUser()
 
 
-  if (!user && loginRequired) {
-    next('/signin');
+  if (!user && loginRequired && !isAbout) {
+    next('/about');
     return;
   }
-  else if(user && !loginRequired) {
+  else if(user && !loginRequired && isAbout) {
+    next('/about')
+  }
+  else if(user && !loginRequired && !isAbout) {
     next('/')
   }
+
   
   next();
 

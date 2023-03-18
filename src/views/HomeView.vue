@@ -1,13 +1,14 @@
 <template>
   <div class="container">
+    <div v-if="disable_btn">
+      <h2>Your exercise page is empty, please add exercise to start</h2> 
+    </div>
     <v-container class="">
-    
       <v-layout row wrap style="justify-content: center !important">
-        <div v-for="post in posts" :key="post._id">        
-          <workout-card 
-            :post="post" 
+        <div v-for="post in posts" :key="post._id">
+          <workout-card
+            :post="post"
             :deleteExerciseFrontend="deleteExerciseFrontend"
-            :disable_btn="disable_btn"
           />
         </div>
       </v-layout>
@@ -20,7 +21,6 @@ import WorkoutCard from "../components/WorkoutCard";
 import { Service } from "@/services/index.js";
 /* import moment from 'moment'; */
 
-
 export default {
   name: "HomePage",
   data() {
@@ -28,51 +28,51 @@ export default {
       lastDateUploaded: null,
       posts: [],
       disable_btn: true,
-    }
+    };
   },
-
 
   components: {
     WorkoutCard,
   },
 
   methods: {
-    async getPosts() {
-
-      try {
-        
-        const res = await Service.get('/posts');
-        this.posts = res.data;
-        
-        console.log("konzol log: ", this.posts)
-
-        
-      } catch (error) {
-        console.log("error: ", error)
-        }
-
+    checkIfEmpty(arr) {
+      if (arr.length == 0) {
+        this.disable_btn = true;
+      } else this.disable_btn = false;
     },
+    async getPosts() {
+      try {
+        const res = await Service.get("/posts");
+        this.posts = res.data;
 
+        console.log("konzol log: ", this.posts);
+
+        this.checkIfEmpty(this.posts)
+
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    },
 
     deleteExerciseFrontend(id) {
       this.posts = this.posts.filter((exercise) => exercise._id !== id);
     },
 
-/*     show(){
+    /*     show(){
       console.log("dada: ", this.getPosts())
     } */
-
   },
 
-  mounted () {
+  mounted() {
     this.getPosts();
-/*     this.show() */
-  }
+    /*     this.show() */
+  },
 };
 </script>
 
 <style scoped>
-*{
+* {
   margin: 0;
 }
 .container {
@@ -82,9 +82,8 @@ export default {
 }
 @media screen and (max-width: 900px) {
   .container {
-  margin: 50px 0px 0px 0px;
-  
-}
+    margin: 50px 0px 0px 0px;
+  }
 }
 .row {
   display: flex;

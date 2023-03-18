@@ -73,7 +73,6 @@ export default {
   props: {
     post: Object,
     deleteExerciseFrontend: Function,
-    disable_btn: Boolean,
   },
 
   data: () => ({
@@ -133,12 +132,13 @@ export default {
         .then((response) => {
           console.log(response.data);
           this.repValue = null;
+          this.disable = false;
         })
         .catch((error) => {
           console.error(error);
         });
-
-      console.log(this.repValue);
+       
+      //console.log(this.repValue);
     },
 
     try() {

@@ -57,7 +57,7 @@
             >
           </div>
 
-          <div id="error-message">
+          <div id="error-message-pass">
             <span class="">{{ error_password }}</span>
           </div>
 
@@ -243,7 +243,7 @@ export default {
             new_password: this.new_password,
           });
           this.error_password = "Successfully updated password !";
-          document.getElementById("error-message").style.backgroundColor =
+          document.getElementById("error-message-pass").style.backgroundColor =
             "#03DC00";
           this.$router.go();
         } else {
@@ -342,6 +342,12 @@ body a:hover {
   color: white;
 }
 #error-message-name {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(248, 81, 81);
+  color: white;
+}
+#error-message-pass {
   display: flex;
   justify-content: center;
   background-color: rgb(248, 81, 81);

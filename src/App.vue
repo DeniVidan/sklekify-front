@@ -12,11 +12,11 @@
             </v-list-item>
           </router-link>
 
-          <router-link v-if="auth.authenticated" to="/workouts">
+          <!-- <router-link v-if="auth.authenticated" to="/workouts">
             <v-list-item to="/workouts" link>
               <v-list-item-title>Workouts</v-list-item-title>
             </v-list-item>
-          </router-link>
+          </router-link> -->
 
           <router-link v-if="auth.authenticated" to="/progress">
             <v-list-item to="/progress" link>
@@ -30,7 +30,13 @@
             </v-list-item>
           </router-link>
 
-          <router-link v-if="!auth.authenticated" to="signin">
+          <router-link v-if="!auth.authenticated" to="/about">
+            <v-list-item to="/about" link>
+              <v-list-item-title> About </v-list-item-title>
+            </v-list-item>
+          </router-link>
+
+          <router-link v-if="!auth.authenticated" to="/signin">
             <v-list-item to="" link>
               <v-list-item-title> Sign in </v-list-item-title>
             </v-list-item>
