@@ -23,8 +23,7 @@ export default {
   },
   data() {
     return {
-      /* reps: [], */
-      proba: "burek",
+
       chartReady: false,
       series: [
         {
